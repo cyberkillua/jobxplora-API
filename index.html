@@ -4,29 +4,49 @@
     <meta charset="UTF-8" /> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jobxplora</title>
+    <link rel="stylesheet" href="./index.css">
   </head>
   <body>
     <div id="doid">
       <form id="myForm">
-        State: <input type="text" name="state" id="state" /><br />
-        Job Title: <input type="text" name="title" id="jobTitle" /><br /><br />
+        State: <input type="text" name="state" id="state" onchange="handleChange(event)" /><br />
+        Job Title: <input type="text" name="title" id="jobTitle" onchange="handleChange(event)" /><br /><br />
         <input type="submit" value="Submit form" />
       </form>
     </div>
 
+    <div id='loader' class="loading">
+      <div class="loader"></div>
+    </div>
+
     <script>
+      const loader = document.getElementById('loader');
       document.getElementById("myForm").addEventListener("submit", myForm);
+
+      loader.style.display = 'none';
+
+      const data = {
+        state: '',
+        title: ''
+      }
+
+      function handleChange(e) {
+        data[e.target.name] = e.target.value;
+      }
+
       function myForm(event) {
         event.preventDefault();
-       
+        loader.style.display = 'flex';
+      
         fetch(
-          "https://jobxplora.name.ng/api/v1/jobs/search?title=web&state=FCT"
+          `https://jobxplora.name.ng/api/v1/jobs/search?title=${data.title}&state=${data.state}`
         )
           .then(response => {
             return response.json();
           })
           .then(data => {
             console.log(data);
+            loader.style.display = 'none';
 
             for (let i = 0; i < data.length; i++) {
               document.getElementById("doid").innerHTML += `<div>
@@ -34,10 +54,11 @@
             <p>Company: ${data[i].company}</p>
             <p>State: ${data[i].state}</p>
             <p>Source: ${data[i].source}</p>
+            <br />
             </div>`;
             }
           })
-          .catch(err => console.log(err));
+          .catch(err => { loader.style.display = 'none'; console.log(err) });
 
         // document.getElementById("myForm").submit();
       }
