@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jobxplora</title>
+  </head>
+  <body>
+    <div id="doid">
+      <form id="myForm">
+        State: <input type="text" name="state" id="state" /><br />
+        Job Title: <input type="text" name="title" id="jobTitle" /><br /><br />
+        <input type="submit" value="Submit form" />
+      </form>
+    </div>
+
+    <script>
+      document.getElementById("myForm").addEventListener("submit", myForm);
+      function myForm(event) {
+        event.preventDefault();
+       
+        fetch(
+          "https://jobxplora.name.ng/api/v1/jobs/search?title=web&state=FCT"
+        )
+          .then(response => {
+            return response.json();
+          })
+          .then(data => {
+            console.log(data);
+
+            for (let i = 0; i < data.length; i++) {
+              document.getElementById("doid").innerHTML += `<div>
+            <p>Title: ${data[i].title}</p>
+            <p>Company: ${data[i].company}</p>
+            <p>State: ${data[i].state}</p>
+            <p>Source: ${data[i].source}</p>
+            </div>`;
+            }
+          })
+          .catch(err => console.log(err));
+
+        // document.getElementById("myForm").submit();
+      }
+    </script>
+  </body>
+</html>
